@@ -14,7 +14,7 @@ import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert'; 
-import { Redirect } from "react-router-dom";
+import handleSignUp from '../container/signup'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -51,7 +51,6 @@ export default function SignUp() {
   const [lastName, setLastName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [redirect,setRedirect] = useState(false);
 
 
   const handleClose = (event, reason) => {
@@ -86,12 +85,9 @@ export default function SignUp() {
       password,
       role
     }
-    localStorage.setItem("user",JSON.stringify(user));
-    if(localStorage.getItem("user") ){
-      console.log("user")
-    }
+    handleSignUp(user)
+
     setOpen(true);
-    setRedirect(true);
   };
 
   return (
@@ -179,7 +175,7 @@ export default function SignUp() {
             </Grid>
           </Grid>
           <Button
-            // type="submit"
+            type="submit"
             fullWidth
             variant="contained"
             color="primary"
@@ -190,7 +186,7 @@ export default function SignUp() {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link href="/signin" variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
@@ -202,7 +198,6 @@ export default function SignUp() {
         </MuiAlert>
       </Snackbar>
       </div>
-      {redirect && <Redirect to ="/signin" />}
     </Container>
   );
 }

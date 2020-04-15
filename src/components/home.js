@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Fab from "@material-ui/core/Fab";
 import Card from "@material-ui/core/Card";
@@ -7,22 +7,15 @@ import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import List from "@material-ui/core/List";
+import Link from '@material-ui/core/Link';
 import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
 import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import Grid from "@material-ui/core/Grid";
-import FolderIcon from "@material-ui/icons/Folder";
+import { handleOnCreateCourse, handleAllCourses, handleOnDeleteCourse } from "../container/home";
+import { useSelector } from "react-redux";
+import updateCourse from '../actions/courseAction'
+import { useDispatch  } from "react-redux";
 
-function generate(element) {
-  return [0, 1, 2].map((value) =>
-    React.cloneElement(element, {
-      key: value,
-    })
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +29,10 @@ const useStyles = makeStyles((theme) => ({
   courseButton: {
     margin: "10",
   },
+  title: {
+    flexGrow: 1,
+    textDecorationLine:"none"
+  },
 }));
 
 export default function Home() {
@@ -43,25 +40,36 @@ export default function Home() {
   const [state, setState] = useState(false);
   const [title, setTitle] = useState(false);
   const [description, setDescription] = useState(false);
-  const [secondary, setSecondary] = useState(false);
+  const [viewCourse, setViewCourse] = useState(false);
+  const dispatch = useDispatch();
+  const courses = useSelector((state) => state.course.courses);
 
-  const onChangeTitle = (e) => {
-    setTitle(e.target.value);
-  };
-  const onChangeDescription = (e) => {
-    setDescription(e.target.value);
-  };
+  const userId = useSelector((state) => state.users.obj.user);
 
+  useEffect( function effectFunction(){
+    handleAllCourses(userId)
+      .then( (r) => dispatch(updateCourse(r.data.courses) ) )
+  }
+    ) 
+  
   const handleCreateCourse = () => {
-    setState(true);
+    setState(!state);
+  };
+  const handleViewCourse = () => {
+    setViewCourse(!viewCourse);
   };
   const handleSubmitCourse = () => {
+    handleOnCreateCourse(userId, title, description);
     setState(false);
-    //send the title and course description to the array of courses.
-    console.log(title, description);
-    //course will take a title, description and userId.
-    
   };
+
+  const handleDeleteCourse =(courseId)=>{
+    handleOnDeleteCourse(userId,courseId)
+  }
+
+  const handleCourseClick = ()=>{
+
+  }
 
   return (
     <div className={classes.root}>
@@ -72,6 +80,14 @@ export default function Home() {
       >
         Create Course{" "}
       </Fab>
+      <Fab
+        variant="extended"
+        onClick={handleViewCourse}
+        className={classes.courseButton}
+      >
+        View Courses{" "}
+      </Fab>
+
       {state ? (
         <Card className={classes.root} variant="outlined">
           <CardContent>
@@ -85,57 +101,51 @@ export default function Home() {
                   id="outlined-basic"
                   label="Title"
                   variant="outlined"
-                  onChange={onChangeTitle}
+                  onChange={(e)=>setTitle(e.target.value)}
                 />
                 <TextField
                   id="outlined-basic"
                   label="Description"
                   variant="outlined"
-                  onChange={onChangeDescription}
+                  onChange={(e)=>setDescription(e.target.value)}
                 />
-                <Button variant="contained" onClick={handleSubmitCourse}>
-                  Default
+                <Typography className={classes.root}>
+
+                <Button variant="body2" onClick={handleSubmitCourse}>
+                  Create
                 </Button>
+                </Typography>
               </form>
             </Typography>
           </CardContent>
         </Card>
       ) : null}
-
-      {/* list */}
-      <FormGroup row>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={secondary}
-              onChange={(event) => setSecondary(event.target.checked)}
-            />
-          }
-          label="View Course Description"
-        />
-      </FormGroup>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <Typography variant="h6" className={classes.title}>
-            Courses
-          </Typography>
-          <div className={classes.demo}>
-            <List>
-              {generate(
-                <ListItem>
-                  <ListItemIcon>
-                    <FolderIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Single-line item"
-                    secondary={secondary ? "Secondary text" : null}
-                  />
-                </ListItem>
-              )}
-            </List>
-          </div>
-        </Grid>
-      </Grid>
+      {viewCourse ? (
+        <div>
+          <FormGroup row></FormGroup>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6" className={classes.title}>
+                Courses
+              </Typography>
+              <div className={classes.demo}>
+                <List>
+                  {courses.map((course) => (
+                    <ListItem>
+                      <Typography variant="h6" className={classes.title}>
+                      <Link href="/course" color="primary" onClick={handleCourseClick} className={classes.link}>
+                        {course.title}
+                      </Link>
+                      </Typography>
+                      <Button color="secondary" onClick={()=>handleDeleteCourse(course.id)}>Delete</Button>
+                    </ListItem>
+                  ))}
+                </List>
+              </div>
+            </Grid>
+          </Grid>
+        </div>
+      ) : null}
     </div>
   );
 }

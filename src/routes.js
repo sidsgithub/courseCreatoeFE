@@ -7,6 +7,7 @@ import {
 import SignUp from "./components/signup";
 import SignIn from "./components/signin";
 import Home from './components/home';
+import Course from './components/course';
 
 export default function Routes() {
   return (
@@ -19,9 +20,12 @@ export default function Routes() {
           <Route path="/home">
            <Home/>
           </Route>
-          <Route path="/">
+          <Route path="/" exact>
             <SignUp/>
           </Route>
+          <Route path="/course" >
+            <Course/>
+            </Route>
         </Switch>
       </div>
     </Router>

@@ -12,6 +12,10 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Redirect } from "react-router-dom";
+import handleSignIn from '../container/signin';
+import {loggedIn} from "../actions/navbarAction";
+import {userloggedIn} from "../actions/userAction";
+import { useDispatch  } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -38,22 +42,34 @@ export default function SignIn() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [redirect,setRedirect] = useState(false);
-
-  const handleOnchangeEmail = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handleOnchangePassword = (e) => {
-    setPassword(e.target.value);
-  };
+  const dispatch = useDispatch();
 
   const onClickSubmit = () => {
-    let user = localStorage.getItem("user");
-    user = JSON.parse(user);
-    if(user.email === email){
-      console.log("success",password);
-      setRedirect(true);
-    }
+
+      handleSignIn( {
+        "email" : email,
+        "password": password
+      }
+      ).then(async (response) => {
+        try {
+            if(response){
+              // localStorage.setItem("user",JSON.stringify(
+              //   { 
+              //     userId :response.data.userId,
+              //     roleId: response.data.roleId
+              //   }
+              //   ));
+              dispatch(loggedIn())
+              dispatch(userloggedIn(response.data.userId,response.data.roleId))
+              setRedirect(true);
+            }
+        }
+        catch (e) {
+            console.log(e)
+        }
+    }).catch(err => console.log(err))
+     
+
   }
 
   return (
@@ -77,7 +93,7 @@ export default function SignIn() {
             name="email"
             autoComplete="email"
             autoFocus
-            onChange={(e) => handleOnchangeEmail(e)}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             variant="outlined"
@@ -89,7 +105,7 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
-            onChange={(e) => handleOnchangePassword(e)}
+            onChange={(e) => setPassword(e.target.value)}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
