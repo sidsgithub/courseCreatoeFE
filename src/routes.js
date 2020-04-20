@@ -4,10 +4,10 @@ import {
   Switch,
   Route
 } from "react-router-dom";
-import SignUp from "./components/signup";
-import SignIn from "./components/signin";
-import Home from './components/home';
-import Course from './components/course';
+import SignUp from "./components/signup/index";
+import SignIn from "./components/signin/index";
+import Home from './components/home/index';
+import Course from './components/course/index';
 
 export default function Routes() {
   return (

@@ -1,12 +1,8 @@
 import { CONSTANTS } from "../actions";
 
-const updateCourse = (courses) => {
-
+export const activateCourse = (course)=>{
   return {
-    type: CONSTANTS.UPDATE_COURSE,
-    payload : courses
-  };
-
-};
-
-export default updateCourse;
+    type : CONSTANTS.ACTIVE_COURSE,
+    payload : course
+  }
+}
