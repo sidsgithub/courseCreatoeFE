@@ -12,31 +12,20 @@ import Chip from "@material-ui/core/Chip";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CloudUploadIcon from "@material-ui/icons/CloudUpload";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ExpansionPanel from "@material-ui/core/ExpansionPanel";
-import ExpansionPanelSummary from "@material-ui/core/ExpansionPanelSummary";
-import ExpansionPanelDetails from "@material-ui/core/ExpansionPanelDetails";
 import Checkbox from "@material-ui/core/Checkbox";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import ListItemText from "@material-ui/core/ListItemText";
 import ComputerIcon from "@material-ui/icons/Computer";
 import useStyles from "./useStyles";
 import getModalStyle from "../home/getModalStyle";
 
 //utility functions.
 import {
-  handleExpansion,
   handleAddTopic,
   handleSubmitTopicTitle,
-  handleUpdateTopic,
-  handleDeleteTopic,
-  handleAddSubTopic,
   handleSubmitAddTopic,
   onClickCheck,
-  handleClickVideo
 } from "./utils";
+
+import Topic from "./topic/index";
 
 function Course() {
   const classes = useStyles();
@@ -67,7 +56,7 @@ function Course() {
       setTopics(response.data.topics);
       // console.log("on mount", topics);
     });
-  }, [userId,courseId,setTopics]);
+  }, [userId, courseId, setTopics]);
 
   //on change topics
   useEffect(() => {
@@ -80,9 +69,8 @@ function Course() {
       if (response.data.message === "success") {
         setWatchedTopics(response.data.topics.map((topic) => topic.topicId));
       }
-      // console.log("on mount", watchedTopics);
     });
-  }, [userId,courseId]);
+  }, [userId, courseId]);
 
   //check box for watched and not watched topics
   const checkBoxFunction = (foundkey, id) => {
@@ -202,98 +190,25 @@ function Course() {
       <div className={classes.compartment}>
         <div className={classes.topics}>
           {topics.map((topic, key) => (
-            <div className={classes.list}>
-              <ExpansionPanel
-                style={{ marginLeft: "5%" }}
-                className={classes.panel}
-                expanded={`panel_${key}` === expansion}
-                onClick={() =>
-                  handleExpansion(
-                    topic.id,
-                    key,
-                    userId,
-                    courseId,
-                    setSubtopics,
-                    setExpansion
-                  )
-                }
-              >
-                <ExpansionPanelSummary
-                  expandIcon={<ExpandMoreIcon />}
-                  aria-label="Expand"
-                  aria-controls="additional-actions1-content"
-                  id="additional-actions1-header"
-                >
-                  {/* check-box */}
-
-                  <FormControlLabel
-                    aria-label="Acknowledge"
-                    onClick={(event) => event.stopPropagation()}
-                    onFocus={(event) => event.stopPropagation()}
-                    label={<h4>{topic.title}</h4>}
-                    control={checkBoxFunction(key, topic.id)}
-                  />
-                  {role === 2 ? (
-                    <Button
-                      onClick={() =>
-                        handleUpdateTopic(
-                          topic.id,
-                          setOnclick,
-                          setTopicId,
-                          setOpenTopicModal
-                        )
-                      }
-                    >
-                      EDIT
-                    </Button>
-                  ) : null}
-
-                  {role === 2 ? (
-                    <Button
-                      color="secondary"
-                      onClick={() =>
-                        handleDeleteTopic(
-                          topic.id,
-                          userId,
-                          courseId,
-                          topics,
-                          setTopics
-                        )
-                      }
-                    >
-                      DELETE
-                    </Button>
-                  ) : null}
-
-                  {role === 2 ? (
-                    <Button
-                      color="primary"
-                      onClick={() =>
-                        handleAddSubTopic(
-                          topic.id,
-                          setTopicId,
-                          setOpenAddSubtopicModal
-                        )
-                      }
-                    >
-                      ADD
-                    </Button>
-                  ) : null}
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <List>
-                    {subtopics.map((subtopic, key) => (
-                      <ListItem
-                        button
-                        onClick={() => handleClickVideo(subtopic.url,setUrl)}
-                      >
-                        <ListItemText primary={subtopic.title} />
-                      </ListItem>
-                    ))}
-                  </List>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            </div>
+            <Topic
+              key={key}
+              idKey = {key}
+              expansion={expansion}
+              topic={topic}
+              userId={userId}
+              courseId={courseId}
+              setSubtopics={setSubtopics}
+              setExpansion={setExpansion}
+              checkBoxFunction={checkBoxFunction}
+              setOnclick={setOnclick}
+              setTopicId={setTopicId}
+              setOpenTopicModal={setOpenTopicModal}
+              topics={topics}
+              setTopics={setTopics}
+              setOpenAddSubtopicModal={setOpenAddSubtopicModal}
+              setUrl={setUrl}
+              subtopics={subtopics}
+            />
           ))}
         </div>
         <div className={classes.player} style={{ marginRight: "5%" }}>
@@ -313,4 +228,5 @@ function Course() {
     </div>
   );
 }
+
 export default Course;

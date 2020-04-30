@@ -14,16 +14,21 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import handleSignUp from "../../container/signup";
-import useStyles from './useStyles';
+import useStyles from "./useStyles";
 
 export default function SignUp() {
   const classes = useStyles();
-  const [role, setRole] = useState("student");
+  
   const [open, setOpen] = useState(false);
-  const [firstName, setFirstName] = useState();
-  const [lastName, setLastName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
+  const [role,setRole] = useState("student");
+
+  const [formValues, setFormValues] = useState({
+    role: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+  });
 
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
@@ -32,33 +37,59 @@ export default function SignUp() {
     setOpen(false);
   };
 
-  const handleChange = (event) => {
-    setRole(event.target.value);
-  };
-
-  const handleOnchangeFirstName = (e) => {
-    setFirstName(e.target.value);
-  };
-  const handleOnchangeLastName = (e) => {
-    setLastName(e.target.value);
-  };
-  const handleOnchangeEmail = (e) => {
-    setEmail(e.target.value);
-  };
-  const handleOnchangePassword = (e) => {
-    setPassword(e.target.value);
+  const handleOnChange = (event, name) => {
+    const newformValues = formValues
+    switch (name) {
+      case "role":
+        const role = event.target.value;
+        newformValues.role = role;
+        setFormValues(newformValues);
+        setRole(role);
+        break;
+      case "firstName":
+        const firstName = event.target.value;
+        newformValues.firstName = firstName;
+        setFormValues(newformValues);
+        break;
+      case "lastName":
+        const lastName = event.target.value;
+        newformValues.lastName = lastName;
+        setFormValues(newformValues);
+        break;
+      case "email":
+        const email = event.target.value;
+        newformValues.email = email;
+        setFormValues(newformValues);
+        break;
+      case "password":
+        const password = event.target.value;
+        newformValues.password = password;
+        setFormValues(newformValues);
+        break;
+      default:
+        break;
+    }
   };
   const onClickSubmit = () => {
     const user = {
-      name: firstName + " " + lastName,
-      email,
-      password,
-      role,
+      name: formValues.firstName + " " + formValues.lastName,
+      email: formValues.email,
+      password: formValues.password,
+      role: formValues.role,
     };
+    console.log(user);
+    // setFormValues({
+    //   role: "student",
+    //   firstName: "",
+    //   lastName: "",
+    //   email: "",
+    //   password: "",
+    // })
     handleSignUp(user);
-
     setOpen(true);
   };
+
+  console.log(formValues)
 
   return (
     <Container component="main" maxWidth="xs">
@@ -82,7 +113,7 @@ export default function SignUp() {
                 id="firstName"
                 label="First Name"
                 autoFocus
-                onChange={(e) => handleOnchangeFirstName(e)}
+                onChange={(e)=>handleOnChange(e,"firstName") }
               />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -94,7 +125,8 @@ export default function SignUp() {
                 label="Last Name"
                 name="lastName"
                 autoComplete="lname"
-                onChange={(e) => handleOnchangeLastName(e)}
+              
+                onChange={(e)=>handleOnChange(e,"lastName") }
               />
             </Grid>
             <Grid item xs={12}>
@@ -106,7 +138,8 @@ export default function SignUp() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                onChange={(e) => handleOnchangeEmail(e)}
+                
+                onChange={(e)=>handleOnChange(e,"email") }
               />
             </Grid>
             <Grid item xs={12}>
@@ -119,7 +152,8 @@ export default function SignUp() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                onChange={(e) => handleOnchangePassword(e)}
+                
+                onChange={(e)=>handleOnChange(e,"password") }
               />
             </Grid>
             <Grid>
@@ -127,7 +161,7 @@ export default function SignUp() {
                 aria-label="role"
                 name="role"
                 value={role}
-                onChange={handleChange}
+                onChange={(e)=>handleOnChange(e,"role") }
                 className={classes.radio}
               >
                 <FormControlLabel

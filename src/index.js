@@ -8,12 +8,16 @@ import {
 import { Provider } from 'react-redux';
 import rootReducer from './reducers/index';
 import { createStore } from 'redux';
-import { loadState , saveState } from './localstorage';
+import { 
+  loadState ,
+   saveState } from './localstorage';
 
 const persistedState = loadState();
 
 
-const store = createStore(rootReducer,persistedState);
+const store = createStore(rootReducer
+  ,persistedState
+  );
 store.subscribe(()=>{
   saveState(store.getState())
 });

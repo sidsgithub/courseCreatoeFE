@@ -3,6 +3,7 @@ import {
   handleOnDeleteCourse,
   handleOnUpdateCourseTitle,
 } from "../../container/home";
+
 //for opening the create course modal
 export const handleOpenCreateCourseCard = (setModalOpenCreateCourse) => {
   setModalOpenCreateCourse(true);
@@ -39,11 +40,13 @@ export const handleSubmitTitle = (
   setCourses,
   setModalOpen
 ) => {
-  handleOnUpdateCourseTitle(userId, courseId, courseTitle).then((response) => {
+  handleOnUpdateCourseTitle(userId, courseId, courseTitle)
+  .then((response) => {
     const newCourses = [...courses];
     const foundIndex = courses.findIndex((x) => x.id === courseId);
     newCourses[foundIndex] = response.data;
     setCourses(newCourses);
+    console.log(courses);
   });
   setModalOpen(false);
 };
